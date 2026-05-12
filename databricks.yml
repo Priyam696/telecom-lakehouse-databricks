@@ -8,8 +8,6 @@ targets:
   dev:
     mode: development
     default: true
-    workspace:
-      host: https://adb-7405613199624703.3.azuredatabricks.net
 
 resources:
   jobs:
@@ -20,6 +18,7 @@ resources:
           existing_cluster_id: 0430-152716-iy5zuufv
           notebook_task:
             notebook_path: ./notebooks/01-bronze-ingestion.py
+            source: WORKSPACE
 
         - task_key: silver_transform
           depends_on:
@@ -27,6 +26,7 @@ resources:
           existing_cluster_id: 0430-152716-iy5zuufv
           notebook_task:
             notebook_path: ./notebooks/02-silver-transform.py
+            source: WORKSPACE
 
         - task_key: data_quality
           depends_on:
@@ -34,10 +34,12 @@ resources:
           existing_cluster_id: 0430-152716-iy5zuufv
           notebook_task:
             notebook_path: ./notebooks/06-data-quality-validation.py
+            source: WORKSPACE
 
         - task_key: gold_aggregation
           depends_on:
             - task_key: data_quality
           existing_cluster_id: 0430-152716-iy5zuufv
           notebook_task:
-            notebook_path: ./notebooks/04-gold-aggregation.pys
+            notebook_path: ./notebooks/04-gold-aggregation.py
+            source: WORKSPACE
