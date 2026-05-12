@@ -1,0 +1,43 @@
+name: Databricks Bundle CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  validate:
+    name: Validate Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+      - name: Validate Bundle
+        env:
+          DATABRICKS_HOST : ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle validate
+
+  deploy:
+    name: Deploy to Databricks
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+      - name: Deploy Bundle
+        env:
+          DATABRICKS_HOST : ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle deploy --target dev
